@@ -2,13 +2,5 @@
 
 [思想导图施工中](https://gitmind.cn/app/docs/mm13a4av)
 
-## 配置
-
-- 安装jupyter
-```bash
-pip install jupyterlab
-pip install notebook
-```
-
-- 安装tslab 
-https://github.com/yunabe/tslab
+## 第三章代码
+https://codesandbox.io/s/vue-js3de-she-ji-yu-si-lu-di-san-zhang-xzrskn?file=/index.html
