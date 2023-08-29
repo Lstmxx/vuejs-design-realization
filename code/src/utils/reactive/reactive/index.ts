@@ -1,8 +1,6 @@
-import { activeEffect, effect, IEffectFn } from './effect';
-import { jobQueue, flushJob } from './scheduler';
+import { activeEffect, IEffectFn } from './effect';
 
 const bucket = new WeakMap<any, Map<any, Set<IEffectFn>>>();
-
 
 const track = (target: any, key: any) => {
   if (!activeEffect) return;
@@ -22,7 +20,6 @@ const trigger = (target: any, key: any) => {
   const depsMap = bucket.get(target);
   if (!depsMap) return;
   const effects = depsMap.get(key);
-  console.log("effects", effects);
   const effectsToRun = new Set<IEffectFn>();
   if (effects) {
     effects.forEach(effectFn => {
@@ -41,53 +38,18 @@ const trigger = (target: any, key: any) => {
   });
 };
 
-const data = { text: "hello world", ok: true, count: 0 };
-const obj = new Proxy(data, {
-  get(target, key) {
-    track(target, key);
-    return target[key];
-  },
-  set(target, key, newValue) {
-    target[key] = newValue;
-    trigger(target, key);
-    return true;
-  }
-});
-
-const computed = (getter: Function) => {
-  const effectFn = effect(getter, { lazy: true });
-  const obj = {
-    get value() {
-      return effectFn();
-    }
-  };
-  return obj;
-};
-
-const 
-
-export default function run() {
-  effect(() => {
-    // document.body.innerText = obj.ok ? obj.text : 'not';
-    // obj.count++;
-    console.log(obj.count);
-  }, {
-    scheduler: (fn: IEffectFn) => {
-      jobQueue.add(fn);
-      flushJob();
-    }
+export function createReactiveObject<T extends object>(target: T) {
+  const proxy = new Proxy(target, {
+    get(target, key) {
+      track(target, key);
+      const result = Reflect.get(target, key);
+      return result;
+    },
+    set(target, key, newValue) {
+      Reflect.set(target, key, newValue);
+      trigger(target, key);
+      return true;
+    },
   });
-
-  obj.count++;
-  obj.count++;
-  console.log('end');
-  // setTimeout(() => {
-  //   obj.text = "hsdgsg";
-  // }, 2000);
-  // setTimeout(() => {
-  //   obj.ok = false;
-  // }, 3000);
-  // setTimeout(() => {
-  //   obj.text = "false";
-  // }, 3000);
+  return proxy;
 }

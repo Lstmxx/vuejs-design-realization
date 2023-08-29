@@ -1,3 +1,5 @@
+import { schedule } from "./scheduler";
+
 interface Options {
   scheduler?: (...args: any) => void;
   lazy?: boolean;
@@ -20,7 +22,7 @@ const cleanup = (fn: IEffectFn) => {
   fn.deps = [];
 }
 
-export const effect = (fn: Function, options?: Options = {}) => {
+export const effect = (fn: Function, options: Options = {}) => {
   const effectFn: IEffectFn = () => {
     cleanup(effectFn);
     activeEffect = effectFn;
@@ -33,7 +35,9 @@ export const effect = (fn: Function, options?: Options = {}) => {
   };
   effectFn.options = options;
   effectFn.deps = [];
-  if (options && options.lazy) {
+  if (options.scheduler) {
+    schedule(effectFn);
+  } else if (options.lazy) {
     return effectFn;
   } else {
     effectFn()

@@ -15,3 +15,8 @@ export function flushJob() {
     isFlushing = false;
   });
 }
+
+export const schedule = (fn: IEffectFn) => {
+  jobQueue.add(fn);
+  flushJob();
+}
