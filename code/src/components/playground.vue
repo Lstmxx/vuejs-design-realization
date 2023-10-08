@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { createReactiveObject } from '@/utils/reactive/reactive';
-import { computed } from '@/utils/reactive/reactive/computed'
+import { createReactiveObject } from '@/utils/reactive';
+import { computed } from '@/utils/reactive/computed'
 
 const obj = createReactiveObject({ a: 2, b: 1});
 
@@ -17,3 +17,4 @@ const sum = computed(() => obj.a + obj.b);
   color: #888;
 }
 </style>
+@/utils/reactive/computed
